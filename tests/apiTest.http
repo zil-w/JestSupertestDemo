@@ -1,0 +1,6 @@
+DELETE http://localhost:3003/api/blogs/5a422b891b54a676234d2424 HTTP/1.1
+//inexistent ID
+###
+DELETE http://localhost:3003/api/blogs/5ffe687fba068216f4e02cc5 HTTP/1.1
+//existent ID
+

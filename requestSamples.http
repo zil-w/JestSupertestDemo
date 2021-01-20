@@ -1,0 +1,20 @@
+POST http://localhost:3003/api/blogs http/1.1
+Content-Type: application/json
+
+{
+    "title": "isglad",
+    "author": "vlad",
+    "url": "impalor.org",
+    "likes": -10
+}
+
+# const blogSchema = new mongoose.Schema({
+#   title: String,
+#   author: String,
+#   url: String,
+#   likes: Number
+# })
+
+###
+
+GET http://localhost:3003/api/blogs http/1.1

@@ -1,0 +1,32 @@
+{
+  "name": "blog_list",
+  "version": "1.0.0",
+  "description": "fullstackopen exercise",
+  "main": "index.js",
+  "scripts": {
+    "test": "cross-env NODE_ENV=test jest --verbose --runInBand --detectOpenHandles",
+    "test_DB": "npm test tests/backend.test.js",
+    "test_one_thing": "npm test -- -t 'verifying delete capability'",
+    "start": "cross-env NODE_ENV=production node index.js",
+    "dev": "cross-env NODE_ENV=development nodemon index.js",
+    "lint": "eslint ."
+  },
+  "author": "Zi Li Wang",
+  "license": "MIT",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "mongoose": "^5.11.11"
+  },
+  "devDependencies": {
+    "cross-env": "^7.0.3",
+    "eslint": "^7.17.0",
+    "jest": "^26.6.3",
+    "nodemon": "^2.0.7",
+    "supertest": "^6.1.1"
+  },
+  "jest": {
+    "testEnvironment": "node"
+  }
+}
