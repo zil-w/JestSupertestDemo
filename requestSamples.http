@@ -1,12 +1,12 @@
-POST http://localhost:3003/api/blogs http/1.1
-Content-Type: application/json
+# POST http://localhost:3003/api/blogs http/1.1
+# Content-Type: application/json
 
-{
-    "title": "isglad",
-    "author": "vlad",
-    "url": "impalor.org",
-    "likes": -10
-}
+# {
+#     "title": "isglad",
+#     "author": "vlad",
+#     "url": "impalor.org",
+#     "likes": -10
+# }
 
 # const blogSchema = new mongoose.Schema({
 #   title: String,
@@ -16,5 +16,70 @@ Content-Type: application/json
 # })
 
 ###
-
+//get all blogs
 GET http://localhost:3003/api/blogs http/1.1
+
+###
+//posting after login, need to set the token manually each time
+POST http://localhost:3003/api/blogs http/1.1
+Content-Type: application/json
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImJpZ0RBTiIsImlkIjoiNjAxMzI3OTA2NjRjNzAzYWM4YzhmZjNlIiwiaWF0IjoxNjExODczNTg1fQ.HtR54CJPfPGxWpXT78jLWxLFBOaIKHWAKojV3QjVWSA
+
+{
+    "title": "bon javi",
+    "author": "danny",
+    "url": "pew.org",
+    "likes": 10
+}
+
+###
+//creating an user
+POST http://localhost:3003/api/users http/1.1
+Content-Type: application/json
+
+{
+    "name":"juan",
+    "username": "bigDAN",
+    "password": "tassdadasd"
+}
+
+###
+//get all users
+GET http://localhost:3003/api/users http/1.1
+
+###
+//login with a valid credential
+POST http://localhost:3003/api/ http/1.1
+Content-Type: application/json
+
+{
+    "username": "bigDAN",
+    "password": "tassdadasd"
+    //tassdadasd
+}
+
+###
+//fetching a particular post, invalid id
+GET http://localhost:3003/api/blogs/5ffe682cba068216f4e99cc4 http/1.1
+
+###
+//delete a post, invalid id
+DELETE http://localhost:3003/api/blogs/5ffe682cba068216f4e99cc4 http/1.1
+
+###
+//update a post, invalid id
+PUT http://localhost:3003/api/blogs/1232 http/1.1
+Content-Type: application/json
+
+{
+    "title": "dong flier",
+    "author": "danny",
+    "url": "gogogogo.org",
+    "likes": 12
+}
+//when your id's format is too different, it gives:
+//CastError: Cast to ObjectId failed for value "213" at path "_id" for model "Blog"
+//"error": "Cast to ObjectId failed for value \"12312324343\" at path \"_id\" for model \"Blog\""
+//otherwise, on a non-found ID, it returns null but it's otherwise successful
+//seems like ID is left untouched
+//oh success, updated entry is returned

@@ -1,7 +1,11 @@
 const express = require('express')
+require('express-async-errors')
 const app = express()
 const cors = require('cors')
-const controllers = require('./controllers/controllers')
+const blogControllers = require('./controllers/blogControllers')
+const userControllers = require('./controllers/userControllers')
+const loginController = require('./controllers/loginController')
+const middlewares = require('./utils/middlewares')
 const DBConfig = require('./utils/config')
 const mongoose = require('mongoose')
 
@@ -14,7 +18,9 @@ mongoose.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true, us
   .then(() => console.log('Database connection established'))
   .catch(error => console.log('connection failed:', error))
 
-
-app.use('/api', controllers)
+app.use('/api', loginController)
+app.use('/api', blogControllers)
+app.use('/api', userControllers)
+app.use(middlewares.errorHandler)
 
 module.exports = app

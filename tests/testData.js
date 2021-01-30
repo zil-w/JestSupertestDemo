@@ -14,4 +14,16 @@ const blogNoUT = { author: 'figma', likes:5 }
 
 const blogOne = [{ _id: '5a422a851b54a676234d17f7', title: 'React patterns', author: 'Michael Chan', url: 'https://reactpatterns.com/', likes: 7, __v: 0 }]
 
-module.exports = { blogs, testBlog, blogNoLike, blogNoTitle, blogNoUrl, blogNoUT, blogOne }
+const rootUser = {
+  username: 'root',
+  name: 'root',
+  password: 'flamingo'
+}
+
+const newUser = {
+  username: 'gogogo',
+  name: 'oi mate',
+  password: 'sadas!!!#32www'
+}
+
+module.exports = { blogs, testBlog, blogNoLike, blogNoTitle, blogNoUrl, blogNoUT, blogOne, rootUser, newUser }

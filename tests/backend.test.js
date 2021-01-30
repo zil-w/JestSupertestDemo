@@ -1,8 +1,8 @@
 const app = require('../app')
 const Blog = require('../models/blog')
-//const mongoose = require('mongoose')
-//const config = require('../utils/config')
+const User = require('../models/user')
 const supertest = require('supertest')
+const mongoose = require('mongoose')
 const testApp = supertest(app)//this instantiate a server instance with its internal port for you
 const testData = require('./testData')
 
@@ -13,6 +13,8 @@ const blogNoLike = testData.blogNoLike
 const blogNoUrl =  testData.blogNoUrl
 const blogNoTitle = testData.blogNoTitle
 const blogNoUT = testData.blogNoUT
+const rootUser = testData.rootUser
+const newUser = testData.newUser
 
 //apparently DB connection is established in testApp instance, so there is no need in establishing DB conn again here
 
@@ -23,6 +25,10 @@ beforeEach(async () => {
   const mongooseBlogObjs = blogs.map(blog => new Blog(blog))
   const promiseBlogObjs = mongooseBlogObjs.map(mBlog => mBlog.save()) //we are not await here
   await Promise.all(promiseBlogObjs)
+
+  await User.deleteMany({})
+  const user = new User(rootUser)
+  await user.save()
 })
 
 //verifying correct number of entries
@@ -128,4 +134,33 @@ describe('verifying update capability', () => {
 
     expect(updatedBlogList.body[0].title).toBe(newTitle)
   })
+})
+
+describe('adding new users', () => {
+  test('is root user saved', async () => {
+    const userList = await testApp
+      .get('/api/users')
+      .expect(200)
+
+    console.log(userList.body)
+    
+    expect(userList.body[0].username).toBe(rootUser.username)
+  })
+
+  test('a single user', async () => {
+    //console.log('user model we have is: ', newUser)
+    const response = await testApp
+      .post('/api/users')
+      .send(newUser)
+      .expect(201)
+      .expect('Content-Type', /application\/json/)
+
+    console.log('response is: ', response)
+    expect(response.body.username).toBe(newUser.username)
+    expect(response.body.name).toBe(newUser.name)
+  })
+})
+
+afterAll(() => {
+  mongoose.connection.close()
 })
