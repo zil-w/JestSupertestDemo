@@ -22,5 +22,6 @@ app.use('/api', loginController)
 app.use('/api', blogControllers)
 app.use('/api', userControllers)
 app.use(middlewares.errorHandler)
+app.use(middlewares.unknownEndpoint)
 
 module.exports = app

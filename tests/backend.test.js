@@ -3,6 +3,7 @@ const Blog = require('../models/blog')
 const User = require('../models/user')
 const supertest = require('supertest')
 const mongoose = require('mongoose')
+const bcrypt = require('bcrypt')
 const testApp = supertest(app)//this instantiate a server instance with its internal port for you
 const testData = require('./testData')
 
@@ -16,18 +17,24 @@ const blogNoUT = testData.blogNoUT
 const rootUser = testData.rootUser
 const newUser = testData.newUser
 
+//token for any tests involving posting blogs
 //apparently DB connection is established in testApp instance, so there is no need in establishing DB conn again here
 
 //wipe test DB and populate it with controlled/known data
 beforeEach(async () => {
+  //wipe and repopulate blogs collection
   await Blog.deleteMany({})
 
   const mongooseBlogObjs = blogs.map(blog => new Blog(blog))
-  const promiseBlogObjs = mongooseBlogObjs.map(mBlog => mBlog.save()) //we are not await here
-  await Promise.all(promiseBlogObjs)
+  const promiseBlogObjs = mongooseBlogObjs.map(mBlog => mBlog.save()) //we are not await here, this is an array of promises
+  await Promise.all(promiseBlogObjs) //execute all promises
 
+  //wipe and repopulate users collection
   await User.deleteMany({})
-  const user = new User(rootUser)
+  const saltRound = 10
+  const hashedPassword = await bcrypt.hash(rootUser.password, saltRound)
+  const firstUser = { username: rootUser.username, name: rootUser.name, hashedPassword, blogs: [] }
+  const user = new User(firstUser)
   await user.save()
 })
 
@@ -44,7 +51,6 @@ describe('verifying if blog has an id', () => {
   test('testing presence of ids', async () => {
     const response = await testApp.get('/api/blogs')
     response.body.forEach(element => {
-      console.log('is ran')
       expect(element.id).toBeDefined()
     })
   })
@@ -53,8 +59,16 @@ describe('verifying if blog has an id', () => {
 //verifying blog creation
 describe('verifying creating a post', () => {
   test('create a post', async () => {
+    //get token
+    const authenticationInfo = await testApp
+      .post('/api/')
+      .send({ username:rootUser.username, password:rootUser.password })
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
+
     await testApp
       .post('/api/blogs')
+      .set('Authorization', `bearer ${authenticationInfo.body.token}`)
       .send(testBlog)
       .expect(201)
       .expect('Content-Type', /application\/json/)
@@ -69,8 +83,15 @@ describe('verifying creating a post', () => {
 //verifying if likes is defaulted to 0 if it's absent in submitted blog
 describe('verifying likes default', () => {
   test('verifying defaulting to zero', async () => {
+    const authenticationInfo = await testApp
+      .post('/api/')
+      .send({ username:rootUser.username, password:rootUser.password })
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
+
     const res = await testApp //what is actually happening here, are post and send promises?
       .post('/api/blogs')
+      .set('Authorization', `bearer ${authenticationInfo.body.token}`)
       .send(blogNoLike)
       .expect(201)
       .expect('Content-Type', /application\/json/)
@@ -136,28 +157,38 @@ describe('verifying update capability', () => {
   })
 })
 
-describe('adding new users', () => {
+describe('User creation tests', () => {
   test('is root user saved', async () => {
     const userList = await testApp
       .get('/api/users')
       .expect(200)
 
-    console.log(userList.body)
-    
     expect(userList.body[0].username).toBe(rootUser.username)
   })
 
-  test('a single user', async () => {
-    //console.log('user model we have is: ', newUser)
+  test('creating a single user', async () => {
     const response = await testApp
       .post('/api/users')
       .send(newUser)
       .expect(201)
       .expect('Content-Type', /application\/json/)
 
-    console.log('response is: ', response)
     expect(response.body.username).toBe(newUser.username)
     expect(response.body.name).toBe(newUser.name)
+  })
+
+  test('creating an invalid user', async () => { //the confusing hashPassword validation error was from the beforeEach, we were trying to save root user to DB but it didn't have a hashedPassword property
+    const invalidUser = { ...newUser, username: 'bo' } //username would be too short
+    const response = await testApp
+      .post('/api/users')
+      .send(invalidUser)
+      .expect(400)
+      .expect('Content-Type', /application\/json/)
+
+    expect(response.body.error).toBe('username is required and needs to be at least 3 characters long')
+
+    const failedInsertion = await User.findOne({ username: invalidUser.username })
+    expect(failedInsertion).toBe(null)
   })
 })
 

@@ -21,8 +21,8 @@ const rootUser = {
 }
 
 const newUser = {
-  username: 'gogogo',
-  name: 'oi mate',
+  username: 'Go Go',
+  name: 'Tamago',
   password: 'sadas!!!#32www'
 }
 

@@ -35,7 +35,7 @@ blogRouter.post('/blogs', async (request, response) => {
   const token = getToken(request)
   const decodedToken = jwt.verify(token, process.env.SECRET)
   if(!token || !decodedToken){
-    return response.status(400).json({ error: 'invalid token' })
+    return response.status(400).json({ error: 'missing/invalid token' })
   }
 
   const poster = await User.findById(decodedToken.id)//submit blog and add the entry's id to its associated user
