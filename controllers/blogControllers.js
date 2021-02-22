@@ -54,7 +54,6 @@ blogRouter.delete('/blogs/:id', async (request, response) => {
 
   if(res){
     response.status(200).json(res)
-    console.log('okay')
   }
   else{
     return response.status(404).json({ error:'entry not found' })//without a json here, it seems like the server just hangs here forever?
