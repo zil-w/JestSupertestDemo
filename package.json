@@ -10,7 +10,8 @@
     "test_user": "npm test -- -t 'a single user'",
     "start": "cross-env NODE_ENV=production node index.js",
     "dev": "cross-env NODE_ENV=development nodemon index.js",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "start:test": "cross-env NODE_ENV=cypress_test node index.js"
   },
   "author": "Zi Li Wang",
   "license": "MIT",

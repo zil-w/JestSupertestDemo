@@ -5,6 +5,7 @@ const cors = require('cors')
 const blogControllers = require('./controllers/blogControllers')
 const userControllers = require('./controllers/userControllers')
 const loginController = require('./controllers/loginController')
+const resetController = require('./controllers/resetController')
 const middlewares = require('./utils/middlewares')
 const DBConfig = require('./utils/config')
 const mongoose = require('mongoose')
@@ -21,6 +22,10 @@ mongoose.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true, us
 app.use('/api', loginController)
 app.use('/api', blogControllers)
 app.use('/api', userControllers)
+
+if(process.env.NODE_ENV === 'cypress_test')
+  app.use('/api/testing', resetController)
+
 app.use(middlewares.errorHandler)
 app.use(middlewares.unknownEndpoint)
 
