@@ -61,10 +61,10 @@ blogRouter.delete('/blogs/:id', async (request, response) => {
 })
 
 blogRouter.put('/blogs/:id', async (req, res) => {
-  const newBlog = req.body
+  const newBlog = req.body//apparently using a "naked" req.body like this is a security risk, what should we do instead?
   if(newBlog.title && newBlog.url){//this just checks if the request has the necessary fields
     const updateOptions = { new: true, runValidators: true, context: 'query' }
-    const updatedBlog= await Blog.findByIdAndUpdate(req.params.id, newBlog, updateOptions)
+    const updatedBlog= await Blog.findByIdAndUpdate(req.params.id, newBlog, updateOptions).populate('user', { name: 1, username: 1, id: 1 })//here we forgot to do populate so frontend no longer has access to the poster's info after liking a post
     if(updatedBlog === null){
       return res.status(404).json({ error:'entry not found' })
     }
