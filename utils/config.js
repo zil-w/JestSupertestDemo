@@ -1,8 +1,9 @@
 require('dotenv').config()
-let mongoUrl = process.env.DB_URL
-const portNum = process.env.PORT_NUM || 3003
+
+const portNum = process.env.PORT || process.env.PORT_NUM || 3003
 const NODE_ENV = process.env.NODE_ENV
 
+let mongoUrl = process.env.DB_URL
 if(NODE_ENV === 'test'){
   mongoUrl = process.env.TEST_DB_URL
   console.log('we are running in test mode!')
@@ -15,4 +16,4 @@ else{
   console.log('we are not running in test modes!')
 }
 
-module.exports = { mongoUrl, portNum, NODE_ENV }
+module.exports = { portNum, NODE_ENV, mongoUrl }
