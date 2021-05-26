@@ -11,7 +11,11 @@
     "start": "cross-env NODE_ENV=production node index.js",
     "dev": "cross-env NODE_ENV=development nodemon index.js",
     "lint": "eslint .",
-    "start:test": "cross-env NODE_ENV=cypress_test node index.js"
+    "start:test": "cross-env NODE_ENV=cypress_test node index.js",
+    "build:ui": "rm -rf build && cd ../part-5-bloglist-frontend && npm run build --prod && cp -r build ../'part 4 node'",
+    "deploy": "git push heroku main",
+    "deploy:full": "npm run build:ui && git add . && git commit -m uibuild && npm run deploy",
+    "logs:prod": "heroku logs --tail"
   },
   "author": "Zi Li Wang",
   "license": "MIT",

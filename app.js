@@ -10,8 +10,8 @@ const middlewares = require('./utils/middlewares')
 const DBConfig = require('./utils/config')
 const mongoose = require('mongoose')
 
+app.use(express.static('build'))
 app.use(cors())
-//app.use(express.static)
 app.use(express.json())
 
 const mongoUrl = DBConfig.mongoUrl
@@ -23,7 +23,7 @@ app.use('/api', loginController)
 app.use('/api', blogControllers)
 app.use('/api', userControllers)
 
-if(process.env.NODE_ENV === 'cypress_test')
+if(DBConfig.NODE_ENV === 'cypress_test')
   app.use('/api/testing', resetController)
 
 app.use(middlewares.errorHandler)
