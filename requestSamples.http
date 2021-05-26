@@ -83,3 +83,22 @@ Content-Type: application/json
 //otherwise, on a non-found ID, it returns null but it's otherwise successful
 //seems like ID is left untouched
 //oh success, updated entry is returned
+
+###
+GET http://localhost:3003/api/blogs/update-comments
+
+###
+POST http://localhost:3003/api/blogs/5ffe682cba068216f4e02cc4/comment
+Content-Type: application/json
+
+{
+    "comments": ["wow this is awesome"]
+}
+
+###
+POST http://localhost:3003/api/blogs/5ffe682cba068216f4e02cc4/comment
+Content-Type: application/json
+
+{
+    "comment": "let's see if mongoDB keywords still work"
+}
