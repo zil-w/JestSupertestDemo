@@ -2,6 +2,11 @@ const userRouter = require('express').Router()
 const User = require('../models/user')
 const bcrypt = require('bcrypt')
 
+userRouter.get('/users', async (request, response) => {
+  const users = await User.find({}).populate('blogs', { title:1, author:1, url:1, likes:1 })//the setting directly applies to elements in the array
+  response.json(users)
+})
+
 userRouter.post('/users', async (request, response) => {
   const userInfo = request.body
 
@@ -24,11 +29,6 @@ userRouter.post('/users', async (request, response) => {
 
   const responseUser = await newUser.save()
   response.status(201).json(responseUser)
-})
-
-userRouter.get('/users', async (request, response) => {
-  const users = await User.find({}).populate('blogs', { title:1, author:1, url:1, likes:1 })//the setting directly applies to elements in the array
-  response.json(users)
 })
 
 module.exports = userRouter

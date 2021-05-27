@@ -9,12 +9,6 @@ blogRouter.get('/blogs', async (_request, response) => {
   response.json(blogs)
 })
 
-blogRouter.get('/blogs/update-comments', async (req, res) => {//this is for updating the existing blog entries with the newly added comment field
-  const oldBlogs = await Blog.find({ comments: { $exists: false } }) //it seems like even though the property doesn't exist in DB, find would add them for you, but not necessarily updating new
-  oldBlogs.forEach(async blog => await blog.save())//schema is update automatically somehow
-  res.json(oldBlogs)
-})
-
 blogRouter.get('/blogs/:id', async (request, response) => {
   const blog = await Blog.findById(request.params.id)
   if(blog === null){ //as long as the provided ID can be converted into an object ID, mongoose just returns null with 200 instead of a 404
@@ -55,32 +49,6 @@ blogRouter.post('/blogs', async (request, response) => {
   response.status(201).json(savedBlog)
 })
 
-blogRouter.delete('/blogs/:id', async (request, response) => {
-  const res = await Blog.findByIdAndDelete(request.params.id) //returns deleted obj if successful, null if failure
-
-  if(res){
-    response.status(200).json(res)
-  }
-  else{
-    return response.status(404).json({ error:'entry not found' })//without a json here, it seems like the server just hangs here forever?
-  }
-})
-
-blogRouter.post('/blogs/:id/comment', async (req, res) => {//we might have done something redundant if this is basically the same as the endpoint for liking a blog
-  const newBlog = req.body//apparently using a "naked" req.body like this is a security risk, what should we do instead?
-  if(newBlog.comment && typeof(newBlog.comment) === 'string'){//this just checks if the request has the necessary fields
-    const updateOptions = { new: true, runValidators: true, context: 'query' }
-    const updatedBlog= await Blog.findByIdAndUpdate(req.params.id, { $push: { comments: newBlog.comment } }, updateOptions).populate('user', { name: 1, username: 1, id: 1 })
-    if(updatedBlog === null){
-      return res.status(404).json({ error:'entry not found' })
-    }
-    res.json(updatedBlog)
-  }
-  else{
-    return res.status(400).json({ error:'missing comments in request' })
-  }
-})
-
 blogRouter.put('/blogs/:id', async (req, res) => {
   const newBlog = req.body
   if(newBlog.title && newBlog.url){
@@ -93,6 +61,38 @@ blogRouter.put('/blogs/:id', async (req, res) => {
   }
   else{
     return res.status(400).json({ error:'missing title and/or url in request' })
+  }
+})
+
+blogRouter.delete('/blogs/:id', async (request, response) => {
+  const res = await Blog.findByIdAndDelete(request.params.id) //returns deleted obj if successful, null if failure
+
+  if(res){
+    response.status(200).json(res)
+  }
+  else{
+    return response.status(404).json({ error:'entry not found' })//without a json here, it seems like the server just hangs here forever?
+  }
+})
+
+blogRouter.get('/blogs/update-comments', async (req, res) => {//this is for updating the existing blog entries with the newly added comment field
+  const oldBlogs = await Blog.find({ comments: { $exists: false } }) //it seems like even though the property doesn't exist in DB, find would add them for you, but not necessarily updating new
+  oldBlogs.forEach(async blog => await blog.save())//schema is update automatically somehow
+  res.json(oldBlogs)
+})
+
+blogRouter.post('/blogs/:id/comment', async (req, res) => {//we might have done something redundant if this is basically the same as the endpoint for liking a blog
+  const newBlog = req.body//apparently using a "naked" req.body like this is a security risk, what should we do instead?
+  if(newBlog.comment && typeof(newBlog.comment) === 'string'){//we could probably santize the data more
+    const updateOptions = { new: true, runValidators: true, context: 'query' }
+    const updatedBlog= await Blog.findByIdAndUpdate(req.params.id, { $push: { comments: newBlog.comment } }, updateOptions).populate('user', { name: 1, username: 1, id: 1 })
+    if(updatedBlog === null){
+      return res.status(404).json({ error:'entry not found' })
+    }
+    res.json(updatedBlog)
+  }
+  else{
+    return res.status(400).json({ error:'missing comments in request' })
   }
 })
 
