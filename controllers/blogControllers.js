@@ -1,4 +1,4 @@
-const blogRouter = require('express').Router() //'/api' endpoint
+const blogRouter = require('express').Router()
 const Blog = require('../models/blog')
 const User = require('../models/user')
 const jwt = require('jsonwebtoken')
@@ -66,11 +66,11 @@ blogRouter.delete('/blogs/:id', async (request, response) => {
   }
 })
 
-blogRouter.post('/blogs/:id/comment', async (req, res) => {//we might have done something wrong if this is basically the same as the endpoint for liking a blog
+blogRouter.post('/blogs/:id/comment', async (req, res) => {//we might have done something redundant if this is basically the same as the endpoint for liking a blog
   const newBlog = req.body//apparently using a "naked" req.body like this is a security risk, what should we do instead?
   if(newBlog.comment && typeof(newBlog.comment) === 'string'){//this just checks if the request has the necessary fields
     const updateOptions = { new: true, runValidators: true, context: 'query' }
-    const updatedBlog= await Blog.findByIdAndUpdate(req.params.id, { $push: { comments: newBlog.comment } }, updateOptions).populate('user', { name: 1, username: 1, id: 1 }) //okay this works, I just got the property name mixed up darn
+    const updatedBlog= await Blog.findByIdAndUpdate(req.params.id, { $push: { comments: newBlog.comment } }, updateOptions).populate('user', { name: 1, username: 1, id: 1 })
     if(updatedBlog === null){
       return res.status(404).json({ error:'entry not found' })
     }
@@ -82,10 +82,10 @@ blogRouter.post('/blogs/:id/comment', async (req, res) => {//we might have done 
 })
 
 blogRouter.put('/blogs/:id', async (req, res) => {
-  const newBlog = req.body//apparently using a "naked" req.body like this is a security risk, what should we do instead?
-  if(newBlog.title && newBlog.url){//this just checks if the request has the necessary fields
+  const newBlog = req.body
+  if(newBlog.title && newBlog.url){
     const updateOptions = { new: true, runValidators: true, context: 'query' }
-    const updatedBlog= await Blog.findByIdAndUpdate(req.params.id, newBlog, updateOptions).populate('user', { name: 1, username: 1, id: 1 })//here we forgot to do populate so frontend no longer has access to the poster's info after liking a post
+    const updatedBlog= await Blog.findByIdAndUpdate(req.params.id, newBlog, updateOptions).populate('user', { name: 1, username: 1, id: 1 })//need to populate with user so that poster's info after liking a post
     if(updatedBlog === null){
       return res.status(404).json({ error:'entry not found' })
     }

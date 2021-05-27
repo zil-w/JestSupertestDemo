@@ -1,3 +1,4 @@
+//just for exercise purpose
 // eslint-disable-next-line no-unused-vars
 const dummyFunction = (_blog) => {
   return 1

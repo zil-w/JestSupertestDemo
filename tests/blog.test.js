@@ -1,3 +1,4 @@
+//for exercise puprose
 const functionPath = '../utils/list_helper'
 
 const dummyFunction = require(functionPath).dummyFunction

@@ -18,7 +18,7 @@ const rootUser = testData.rootUser
 const newUser = testData.newUser
 
 //token for any tests involving posting blogs
-//apparently DB connection is established in testApp instance, so there is no need in establishing DB conn again here
+//DB connection is established in testApp instance, so there is no need in establishing DB conn again here
 
 //wipe test DB and populate it with controlled/known data
 beforeEach(async () => {

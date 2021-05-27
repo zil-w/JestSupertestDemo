@@ -34,5 +34,5 @@ userSchema.set('toJSON', {
   }
 })
 
-//this will create a new collection in your Blogs DB
+//this will create a new collection in your Blogs DB if it wasn't there before
 module.exports = mongoose.model('User', userSchema)

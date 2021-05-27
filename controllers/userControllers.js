@@ -2,10 +2,8 @@ const userRouter = require('express').Router()
 const User = require('../models/user')
 const bcrypt = require('bcrypt')
 
-//let's try delegating try and catch blocks to the express-async-errors package
 userRouter.post('/users', async (request, response) => {
   const userInfo = request.body
-  //console.log('submitted user: ', userInfo)
 
   if(!userInfo.password || userInfo.password.length < 3){
     return response.status(400).json({ error:'password is required and needs to be at least 3 characters long' })
@@ -14,7 +12,7 @@ userRouter.post('/users', async (request, response) => {
     return response.status(400).json({ error:'username is required and needs to be at least 3 characters long' })
   }
 
-  const saltRound = 10 //what does this actually do?
+  const saltRound = 10 //need to look up why this is important
   const hashedPassword = await bcrypt.hash(userInfo.password, saltRound)
 
   const newUser = new User({
